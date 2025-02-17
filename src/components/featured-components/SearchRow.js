@@ -10,14 +10,13 @@ export default function SearchRow({title, type, query}) {
     const [formatedQuery, setformatedQuery] = useState('')
 
     useEffect(() => {
-        const formatedQuery = query.toLowerCase().split().join('+')
+        const formatedQuery = query.toLowerCase().split(' ').join('+')
         setformatedQuery(formatedQuery)
     }, [query])
 
-
     useEffect(() => {
         const [source, makeRequest] = makeAxiosRequest(`https://api.spotify.com/v1/search?q=${formatedQuery}&type=${type}&limit=9`)
-        if (formatedQuery.length > 0){
+        if (formatedQuery.length > 0) {
             makeRequest()
                 .then((data) => {
                     const key = Object.keys(data)[0]
@@ -30,7 +29,7 @@ export default function SearchRow({title, type, query}) {
         }
         return () => source.cancel()
     }, [formatedQuery, type])
-
+    
 
     return (
         <div className='CollectionRow' style={{display: result.length===0? 'none':'grid'}}>
@@ -38,4 +37,5 @@ export default function SearchRow({title, type, query}) {
             <SearchRowGrid type={type} info={result}/>
         </div>
     )
+    
 }
