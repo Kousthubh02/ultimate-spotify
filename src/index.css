@@ -51,6 +51,10 @@ body{
     grid-template-rows: 1fr auto;
     grid-template-columns: auto 1fr;
     overflow: hidden;
+    background-image: url(./images/bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
 .loading{
@@ -64,12 +68,6 @@ body{
 }
 
 .sidebar{
-    background: radial-gradient(circle, rgba(94, 70, 70, 1), rgba(135, 95, 95, 1), rgba(129, 118, 118, 1));
-    
-box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-backdrop-filter: blur( 16.5px );
--webkit-backdrop-filter: blur( 16.5px );
-border: 1px solid rgba( 255, 255, 255, 0.18 );
     width: 232px;
     padding-top: 24px;
     display: flex;
@@ -119,13 +117,8 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
 
 .activeMainNav{
-    background: rgba(231, 204, 204, 0.45);
-box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-backdrop-filter: blur( 16.5px );
--webkit-backdrop-filter: blur( 16.5px );
 border-radius: 10px;
-border: 1px solid rgba( 255, 255, 255, 0.18 );
-    color: #fff
+    color: #fff;
 }
 
 
@@ -257,7 +250,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 
 .cta-wrapper{
     padding: 0 8px;
-    background:rgba(106, 94, 94, 30);
+    background:rgba(226, 215, 215, 0.1);
 }
 
 .cta-link{
@@ -279,10 +272,8 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 
 .footer{
     min-width: 768px;
-    background: rgba(200, 125, 125, 0.536);
 backdrop-filter: blur( 16.5px );
 -webkit-backdrop-filter: blur( 16.5px );
-border: 1px solid rgba( 255, 255, 255, 0.18 );
     border-top: 1px solid #000;
     grid-column: 1/-1;
     position:sticky;
@@ -340,13 +331,13 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
     width: 56px;
     height: 56px;
     min-width: 56px;
-    box-shadow: 0 0 10px rgba(0,0,0,.3);
+    box-shadow: 0 0 10px rgba(160, 160, 160, 0.3);
     margin: 0;
     display: block;
     border: 0;
     position: relative;
     z-index: 0;
-    background-color: #282828;
+    background-color: #b6b6b6;
 }
 
 .player-cover > div {
@@ -536,10 +527,10 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
     bottom: 40px;
     right: -122px;
     display: none;
-    background: #282828;
+    background: rgba(150, 150, 150, 0.3);
     border-radius: 5px;
     z-index: 999;
-    box-shadow: 0 4px 12px 4px rgba(0,0,0,.5);
+    box-shadow: 0 4px 12px 4px rgba(174, 173, 173, 0.641);
     display: block;
     animation: fadeIn 333ms cubic-bezier(.3,0,0,1);
 }
@@ -551,7 +542,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
     margin-left: -10px;
     margin-right: -10px;
     border: 10px solid transparent;
-    border-top-color: #282828;
+    border-top-color: rgba(205, 203, 203, 0.157);;
     position: absolute;
     content: "";
 }
@@ -598,7 +589,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: #282828;
+    background-color: rgba(205, 203, 203, 0.157);
     border: 0;
     padding: 10px 15px;
     position: relative;
@@ -693,12 +684,6 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
 
 .featured{
-    background: radial-gradient(circle, rgba(94, 70, 70, 1), rgba(135, 95, 95, 1), rgba(129, 118, 118, 1));
-box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-backdrop-filter: blur( 16.5px );
--webkit-backdrop-filter: blur( 20.5px );
-border-radius: 0px;
-border: 1px solid rgba( 255, 255, 255, 0.18 );
     overflow-y: scroll;
     position: relative;
 }
@@ -736,11 +721,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
 .header-bar{
     width: 100%;
     height: 60px;
-    background: rgba(224, 173, 173, 0.45);
-    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-    backdrop-filter: blur( 16.5px );
-    -webkit-backdrop-filter: blur( 16.5px );
-    border-radius: 10px;
+    border-radius: 20px;
     border: 1px solid rgba( 255, 255, 255, 0.18 );
     position: sticky;
     top:0;
@@ -948,6 +929,7 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
     grid-auto-flow: row;
     grid-template-columns: 1fr;
     grid-gap: 32px;
+    
 }
 
 .CollectionRow{
@@ -956,6 +938,10 @@ border: 1px solid rgba( 255, 255, 255, 0.18 );
     grid-gap: 16px;
     grid-template-columns: auto;
     grid-template-rows: auto;
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.09);
+    padding: 16px;
 }
 
 

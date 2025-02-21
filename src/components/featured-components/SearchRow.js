@@ -1,41 +1,46 @@
-import React, {useEffect, useState} from 'react'
-
+import React, { useEffect, useState } from 'react'
 import makeAxiosRequest from '../../utilities/makeAxiosRequest'
-
 import SearchRowTitle from './SearchRowTitle'
 import SearchRowGrid from './SearchRowGrid'
 
-export default function SearchRow({title, type, query}) {
-    const [result, setResult] = useState([])
-    const [formatedQuery, setformatedQuery] = useState('')
+export default function SearchRow({ title, type, query }) {
+  const [result, setResult] = useState([])
+  const [formattedQuery, setFormattedQuery] = useState('')
 
-    useEffect(() => {
-        const formatedQuery = query.toLowerCase().split(' ').join('+')
-        setformatedQuery(formatedQuery)
-    }, [query])
+  useEffect(() => {
+    const newFormattedQuery = query.toLowerCase().split(' ').join('+')
+    setFormattedQuery(newFormattedQuery)
+  }, [query])
 
-    useEffect(() => {
-        const [source, makeRequest] = makeAxiosRequest(`https://api.spotify.com/v1/search?q=${formatedQuery}&type=${type}&limit=9`)
-        if (formatedQuery.length > 0) {
-            makeRequest()
-                .then((data) => {
-                    const key = Object.keys(data)[0]
-                    const result = data[key].items
-                    setResult(result)
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-        }
-        return () => source.cancel()
-    }, [formatedQuery, type])
-    
+  useEffect(() => {
+    if (formattedQuery.length > 0) {
+      const [source, makeRequest] = makeAxiosRequest(
+        `https://api.spotify.com/v1/search?q=${formattedQuery}&type=${type}&limit=9`
+      )
+      makeRequest()
+        .then((data) => {
+          const key = Object.keys(data)[0]
+          const items = data[key].items
+          // Filter out any null (or undefined) items from the result
+          const safeItems = Array.isArray(items)
+            ? items.filter((item) => item != null)
+            : []
+          setResult(safeItems)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+      return () => source.cancel()
+    }
+  }, [formattedQuery, type])
 
-    return (
-        <div className='CollectionRow' style={{display: result.length===0? 'none':'grid'}}>
-            <SearchRowTitle title={title}/>
-            <SearchRowGrid type={type} info={result}/>
-        </div>
-    )
-    
+  return (
+    <div
+      className="CollectionRow"
+      style={{ display: result.length === 0 ? 'none' : 'grid' }}
+    >
+      <SearchRowTitle title={title} />
+      <SearchRowGrid type={type} info={result} />
+    </div>
+  )
 }

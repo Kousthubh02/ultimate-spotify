@@ -1,35 +1,49 @@
-import React, {useState, useEffect} from 'react'
-
-import makeAxiosRequest from '../../utilities/makeAxiosRequest'
-
-import BrowseCard from '../featured-components/BrowseCard'
-import PageTitle from '../featured-components/PageTitle'
+import React, { useState, useEffect } from 'react';
+import makeAxiosRequest from '../../utilities/makeAxiosRequest';
+import BrowseCard from '../featured-components/BrowseCard';
+import PageTitle from '../featured-components/PageTitle';
 
 export default function BrowsePage() {
-    const [genre, setGenre] = useState([])
+  const [categories, setCategories] = useState([]);
 
-    useEffect(() => {
-        const [source, makeRequest] = makeAxiosRequest('https://api.spotify.com/v1/browse/categories?limit=50')
+  useEffect(() => {
+    // Flag to track mounting
+    let isMounted = true;
 
-        makeRequest()
-            .then((data) => {
-                setGenre(data.categories.items)
-            })
-            .catch((error) => console.log(error))
-        
-        return () => source.cancel()
-    }, [])
+    const [source, makeRequest] = makeAxiosRequest(
+      'https://api.spotify.com/v1/browse/categories?limit=50'
+    );
 
-    return (
-        <div className="page-content">
-            <div className='browsePage'>
-                <PageTitle name='Browse All' />
-                <div className="browseGrid">
-                    {genre.map((genre) => {
-                        return <BrowseCard key={genre.id} info={genre}/>
-                    })}
-                </div>
-            </div>
+    makeRequest()
+      .then((data) => {
+        // Check if the component is still mounted before updating state
+        if (isMounted && data.categories && data.categories.items) {
+          setCategories(data.categories.items);
+        }
+      })
+      .catch((error) => console.error('Error fetching categories:', error));
+
+    // Cleanup function cancels the Axios request and prevents state updates
+    return () => {
+      isMounted = false;
+      source.cancel(); // Cancel the Axios request if it's still pending
+    };
+  }, []);
+
+  return (
+    <div className="page-content">
+      <div className="browsePage">
+        <PageTitle name="Browse All" />
+        <div className="browseGrid">
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <BrowseCard key={category.id} info={category} />
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
-    )
+      </div>
+    </div>
+  );
 }
