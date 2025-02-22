@@ -41,9 +41,9 @@ const UserInfo = () => {
                 </span>
             </button>
             <ul className='UserInfoOptions' style={{display: open?'block':'none'}}>
-                <li>
+                {/* <li>
                     <a href="https://www.spotify.com/account/?utm_source=play&amp;utm_campaign=wwwredirect" target="_blank" rel="noopener noreferrer">Account</a>
-                </li>
+                </li> */}
                 <li>
                     <a href={`/user/${id}`}>Profile</a>
                 </li>

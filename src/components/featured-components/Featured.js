@@ -25,7 +25,6 @@ function Featured(props) {
   return (
     <div className="featured">
       <Headerbar>
-        <HistoryNav />
 
         <Route exact path="/search">
           <SearchBar query={query} setQuery={setQuery} resetQuery={resetQuery} />

@@ -30,13 +30,13 @@ export default function PageContent({ query, playlists, refreshPlaylist, message
         <Route path='/search'>
           <SearchPage query={query} />
         </Route>
-        <Route path='/genre'>
+        <Route path='/genre/:id'>
           <GenrePage />
         </Route>
-        <Route path='/playlist'>
+        <Route path='/playlist/:id'>
           <PlayListPage playlists={safePlaylists} refreshPlaylist={refreshPlaylist} />
         </Route>
-        <Route path='/album'>
+        <Route path='/album/:id'>
           <AlbumPage />
         </Route>
         <Route path='/user'>

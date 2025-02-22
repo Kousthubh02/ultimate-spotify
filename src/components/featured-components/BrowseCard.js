@@ -1,29 +1,47 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Add this import
+import PropTypes from 'prop-types'; // For prop type validation
 
 export default function BrowseCard({ info }) {
-  // Log the info object to check the id and other properties
-  console.log('BrowseCard info:', info);
-
   const { icons, name, id } = info;
   
-  // Warn if id is missing
+  // Validate required props
   if (!id) {
-    console.warn('No id found for this BrowseCard:', info);
+    console.error('Missing id in BrowseCard:', info);
+    return null; // Don't render invalid card
   }
-  
-  // Use optional chaining in case icons is not populated
+
   const img_link = icons?.[0]?.url || 'default-image.jpg';
 
   return (
     <div className="browseLinkContainer">
-      <a href={`/genre/${id}`} className="browseLink">
+      {/* Use Link instead of anchor tag for SPA navigation */}
+      <Link to={`/genre/${id}`} className="browseLink">
         <h3 style={titleStyle}>{name}</h3>
         <div style={overlayStyle}></div>
-        <img loading="lazy" src={img_link} alt={name} style={{ width: '100%' }} />
-      </a>
+        <img 
+          loading="lazy" 
+          src={img_link} 
+          alt={name} 
+          style={{ width: '100%' }} 
+        />
+      </Link>
     </div>
   );
 }
+
+// Add prop type validation
+BrowseCard.propTypes = {
+  info: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    icons: PropTypes.arrayOf(
+      PropTypes.shape({
+        url: PropTypes.string
+      })
+    )
+  }).isRequired
+};
 
 const titleStyle = {
   fontSize: '24px',

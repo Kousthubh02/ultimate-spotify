@@ -1,49 +1,118 @@
 import React, { useState, useEffect } from 'react';
-import makeAxiosRequest from '../../utilities/makeAxiosRequest';
+import axios from 'axios';
 import BrowseCard from '../featured-components/BrowseCard';
 import PageTitle from '../featured-components/PageTitle';
 
 export default function BrowsePage() {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Flag to track mounting
-    let isMounted = true;
+    const source = axios.CancelToken.source();
+    
+    async function fetchData() {
+      try {
+        const token = await getAccessToken();
 
-    const [source, makeRequest] = makeAxiosRequest(
-      'https://api.spotify.com/v1/browse/categories?limit=50'
-    );
+        // 1. Fetch all categories for Indian market
+        const categoriesResponse = await axios.get(
+          'https://api.spotify.com/v1/browse/categories?country=IN&limit=50',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            cancelToken: source.token,
+          }
+        );
 
-    makeRequest()
-      .then((data) => {
-        // Check if the component is still mounted before updating state
-        if (isMounted && data.categories && data.categories.items) {
-          setCategories(data.categories.items);
-        }
-      })
-      .catch((error) => console.error('Error fetching categories:', error));
+        const allCategories = categoriesResponse.data.categories.items;
 
-    // Cleanup function cancels the Axios request and prevents state updates
-    return () => {
-      isMounted = false;
-      source.cancel(); // Cancel the Axios request if it's still pending
-    };
+        // 2. Verify each category has playlists with tracks
+        const verifiedCategories = await Promise.all(
+          allCategories.map(async (category) => {
+            try {
+              const searchResponse = await axios.get(
+                `https://api.spotify.com/v1/search?q=${encodeURIComponent(category.name)}&type=playlist&market=IN&limit=1`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                  cancelToken: source.token,
+                }
+              );
+
+              const playlist = searchResponse.data.playlists.items[0];
+              if (!playlist) return null;
+
+              const tracksResponse = await axios.get(
+                `https://api.spotify.com/v1/playlists/${playlist.id}/tracks?market=IN`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                  cancelToken: source.token,
+                }
+              );
+
+              return tracksResponse.data.items.length > 0 ? category : null;
+            } catch (error) {
+              console.warn(`Skipping ${category.name}:`, error.message);
+              return null;
+            }
+          })
+        );
+
+        setCategories(verifiedCategories.filter(Boolean));
+        setLoading(false);
+
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+    return () => source.cancel();
   }, []);
 
   return (
     <div className="page-content">
       <div className="browsePage">
-        <PageTitle name="Browse All" />
-        <div className="browseGrid">
-          {categories.length > 0 ? (
-            categories.map((category) => (
-              <BrowseCard key={category.id} info={category} />
-            ))
-          ) : (
-            <p>Loading...</p>
-          )}
-        </div>
+        <PageTitle name="Browse All Categories" />
+        {error && <div className="error">{error.message}</div>}
+        {loading ? (
+          <p>Loading categories...</p>
+        ) : (
+          <div className="browseGrid">
+            {categories.map((category) => (
+              <BrowseCard 
+                key={category.id} 
+                info={category}
+                extraText="Tracks Available"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
+}
+
+// Keep the same getAccessToken function
+async function getAccessToken() {
+  const clientId = 'e57af0b524a44d4ea08501d5cf7a453a';
+  const clientSecret = '9ada5e0910344828838255aa76ad73c2';
+  const tokenUrl = 'https://accounts.spotify.com/api/token';
+
+  try {
+    const response = await axios.post(
+      tokenUrl,
+      'grant_type=client_credentials',
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        },
+      }
+    );
+    return response.data.access_token;
+  } catch (error) {
+    console.error('Error fetching access token:', error);
+    throw error;
+  }
 }
