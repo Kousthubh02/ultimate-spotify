@@ -89,8 +89,8 @@ export default function GenrePage() {
 
 // Reuse your existing getAccessToken function
 async function getAccessToken() {
-  const clientId = 'e57af0b524a44d4ea08501d5cf7a453a';
-  const clientSecret = '9ada5e0910344828838255aa76ad73c2';
+  const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
   const tokenUrl = 'https://accounts.spotify.com/api/token';
   
   try {

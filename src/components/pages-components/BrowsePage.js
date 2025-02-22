@@ -9,6 +9,7 @@ export default function BrowsePage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    logEnv();
     const source = axios.CancelToken.source();
     
     async function fetchData() {
@@ -92,17 +93,22 @@ export default function BrowsePage() {
     </div>
   );
 }
-
-// Keep the same getAccessToken function
 async function getAccessToken() {
-  const clientId = 'e57af0b524a44d4ea08501d5cf7a453a';
-  const clientSecret = '9ada5e0910344828838255aa76ad73c2';
   const tokenUrl = 'https://accounts.spotify.com/api/token';
+  
+  // Ensure environment variables are properly loaded
+  const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
+
+  // Verify credentials exist
+  if (!clientId || !clientSecret) {
+    throw new Error('Missing Spotify client credentials');
+  }
 
   try {
     const response = await axios.post(
       tokenUrl,
-      'grant_type=client_credentials',
+      new URLSearchParams({ grant_type: 'client_credentials' }),
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -112,7 +118,18 @@ async function getAccessToken() {
     );
     return response.data.access_token;
   } catch (error) {
-    console.error('Error fetching access token:', error);
+    console.error('Authentication failed:', error.response?.data);
     throw error;
+  }
+}
+
+
+export function logEnv() {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Environment Variables:');
+    console.log('REACT_APP_SPOTIFY_CLIENT_ID:', process.env.REACT_APP_SPOTIFY_CLIENT_ID ? '*****' : 'Not Found');
+    console.log('REACT_APP_SPOTIFY_CLIENT_SECRET:', process.env.REACT_APP_SPOTIFY_CLIENT_SECRET ? '*****' : 'Not Found');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('Public URL:', process.env.PUBLIC_URL);
   }
 }
